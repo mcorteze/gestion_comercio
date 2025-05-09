@@ -1,0 +1,21 @@
+.logistica-editar-form .ant-form-item {
+    margin-bottom: 10px;
+}
+
+.logistica-editar-form .ant-form-item-label {
+    padding-bottom: 0px !important;
+}
+
+.logistica-editar-form .ant-form-item-label label span{
+    font-size: 14px;
+}
+
+.logistica-editar-form .form-label-ellipsis {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+  }
+  

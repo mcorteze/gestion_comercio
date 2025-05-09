@@ -1,0 +1,82 @@
+/* Contenedor principal de comentarios */
+.comentarios-container {
+    padding: 16px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    height: 550px; /* Ocupar el espacio disponible sin scroll */
+    overflow: hidden; /* Ocultar scroll externo */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Título de los comentarios */
+  .comentarios-title {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 6px;
+    color: #333;
+  }
+  
+  /* Contenedor de la lista de comentarios */
+  .comentarios-list-container {
+    max-height: 100%; /* Altura máxima deseada */
+    overflow-y: auto; /* Scroll solo aquí */
+    flex-grow: 1;
+    padding-right: 8px; /* Para evitar que tape el contenido */
+  }
+  
+  /* Estilo de la lista */
+  .comentarios-list {
+    margin-top: 10px;
+  }
+  
+  /* Estilo para cada tarjeta de comentario */
+  .comentarios-card {
+    padding: 0px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 4px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+  }
+  
+  .comentarios-card .ant-card-body {
+    padding: 6px 6px;
+  }
+
+  .comentarios-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Texto truncado del comentario */
+  .comentarios-text {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+    margin: 0px;
+    word-wrap: break-word;
+  }
+  
+  /* Fecha del comentario */
+  .comentarios-date {
+    font-size: 0.875rem;
+    color: #888;
+    margin: 0px;
+  }
+  
+  /* Spinner de carga */
+  .loading-spinner {
+    display: block;
+    margin: 50px auto;
+  }
+  
+  /* Mensaje de error */
+  .error-alert {
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
