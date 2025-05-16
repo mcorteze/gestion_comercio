@@ -30,6 +30,13 @@
     color: white;
   }
   
+    /* Estilo para el botón de Eliminar (rojo) */
+  .action-button.search {
+    background-color: #18a689; /* Rojo */
+    border-color: #18a689;
+    color: white;
+  }
+  
   /* Efecto hover */
   .action-button:hover {
     opacity: 0.8;

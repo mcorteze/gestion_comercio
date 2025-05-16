@@ -82,7 +82,6 @@ const LogisticaPage = () => {
 
   return (
     <div className="page-full">
-      <h1>Logística de operaciones</h1>
       <Space direction="vertical" style={{ marginBottom: 16 }}>
         <Input.Search
           placeholder="Buscar por orden de compra o número BL AWB CRT"

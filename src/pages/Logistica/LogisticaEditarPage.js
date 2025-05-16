@@ -12,8 +12,11 @@ import './LogisticaEditarPage.css';
 
 const { TabPane } = Tabs;
 
-const LogisticaEditarPage = () => {
-  const { id } = useParams();
+const LogisticaEditarPage = ({ id: propId }) => {
+  // Si no recibe id como prop, intenta obtenerlo del URL
+  const { id: paramId } = useParams();
+  const id = propId || paramId;
+
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,8 +24,9 @@ const LogisticaEditarPage = () => {
   const [comentariosCount, setComentariosCount] = useState(0);
   const [productosCount, setProductosCount] = useState(0);
 
-  // Fetch operación
   useEffect(() => {
+    if (!id) return; // Si no hay id, no hacer nada
+
     const fetchOperacion = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/api/operaciones/${id}`);
@@ -50,8 +54,9 @@ const LogisticaEditarPage = () => {
     fetchOperacion();
   }, [id, form]);
 
-  // Fetch counts
   useEffect(() => {
+    if (!id) return;
+
     const fetchCounts = async () => {
       try {
         const [comentariosRes, productosRes] = await Promise.all([
@@ -81,6 +86,7 @@ const LogisticaEditarPage = () => {
 
   if (loading) return <Spin />;
   if (error) return <div>{error}</div>;
+  if (!id) return <div>ID de operación no especificado</div>;
 
   return (
     <div style={{ display: 'flex', gap: '24px' }}>
@@ -91,29 +97,29 @@ const LogisticaEditarPage = () => {
 
       <div style={{ flex: 1 }}>
         <Tabs defaultActiveKey="1">
-  <TabPane
-    tab={
-      <span>
-        <LuBox style={{ marginRight: 8 }} />
-        Productos ({productosCount})
-      </span>
-    }
-    key="1"
-  >
-    <LogisticaProductos operacionId={id} />
-  </TabPane>
-  <TabPane
-    tab={
-      <span>
-        <MessageOutlined style={{ marginRight: 8 }} />
-        Comentarios ({comentariosCount})
-      </span>
-    }
-    key="2"
-  >
-    <LogisticaComentarios operacionId={id} />
-  </TabPane>
-</Tabs>
+          <TabPane
+            tab={
+              <span>
+                <LuBox style={{ marginRight: 8 }} />
+                Productos ({productosCount})
+              </span>
+            }
+            key="1"
+          >
+            <LogisticaProductos operacionId={id} />
+          </TabPane>
+          <TabPane
+            tab={
+              <span>
+                <MessageOutlined style={{ marginRight: 8 }} />
+                Comentarios ({comentariosCount})
+              </span>
+            }
+            key="2"
+          >
+            <LogisticaComentarios operacionId={id} />
+          </TabPane>
+        </Tabs>
       </div>
     </div>
   );

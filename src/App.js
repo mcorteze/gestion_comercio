@@ -21,6 +21,8 @@ import OperacionesEditarPage from './pages/Operaciones/OperacionesEditarPage.js'
 import LogisticaPage from './pages/Logistica/LogisticaPage.js';
 import LogisticaEditarPage from './pages/Logistica/LogisticaEditarPage.js';
 import BandejaPage from './pages/Bandeja/BandejaPage.js';
+import SeguimientoPage from './pages/Seguimiento/SeguimientoPage.js';
+
 import './App.css';
 
 const { Sider, Content } = Layout;
@@ -48,11 +50,8 @@ const AppContent = () => {
           <Menu.Item key="3" icon={<GoContainer />}>
             <Link to="/operaciones">Operaciones</Link>
           </Menu.Item>
-          <Menu.Item key="4" icon={<MdOutlineSupportAgent />}>
-            <Link to="/logistica">Logistica</Link>
-          </Menu.Item>
-          <Menu.Item key="5" icon={<MdOutlineSupportAgent />}>
-            <Link to="/bandeja">Bandeja</Link>
+          <Menu.Item key="6" icon={<MdOutlineSupportAgent />}>
+            <Link to="/seguimiento">Seguimiento</Link>
           </Menu.Item>
         </Menu>
         
@@ -79,9 +78,11 @@ const AppContent = () => {
             <Route path="/operaciones" element={<OperacionesPage />} />
             <Route path="/operaciones/:id" element={<OperacionesEditarPage />} />
             <Route path="/crear_operacion" element={<OperacionesCrearPage />} />
+            <Route path="/crear_operacion/:id" element={<OperacionesCrearPage />} />
             <Route path="/logistica" element={<LogisticaPage />} />
             <Route path="/logistica/:id" element={<LogisticaEditarPage />} />
             <Route path="/bandeja" element={<BandejaPage />} />
+            <Route path="/seguimiento" element={<SeguimientoPage />} />
           </Routes>
         </Content>
       </Layout>

@@ -10,7 +10,7 @@ import {
   Tabs,
 } from 'antd';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import esES from 'antd/locale/es_ES';
@@ -18,16 +18,18 @@ import CamposAdministrativos from '../../components/OperacionesCrearPage/CamposA
 import CamposComerciales from '../../components/OperacionesCrearPage/CamposComerciales';
 import CamposLogistica from '../../components/OperacionesCrearPage/CamposLogistica';
 
-
 const { Option } = Select;
 const { TabPane } = Tabs;
 
 const OperacionesCrearPage = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const { id } = useParams(); // ✅ capturar el id si viene en la ruta
+
   const [clientes, setClientes] = useState([]);
   const [proveedores, setProveedores] = useState([]);
   const [activeTab, setActiveTab] = useState('1');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchClientesProveedores = async () => {
@@ -42,29 +44,57 @@ const OperacionesCrearPage = () => {
         notification.error({ message: 'Error al cargar clientes o proveedores' });
       }
     };
+
+    const fetchOperacion = async () => {
+      if (!id) return;
+
+      setLoading(true);
+      try {
+        const response = await axios.get(`http://localhost:3001/api/operaciones/${id}`);
+        const data = response.data;
+
+        // Formatear fechas para que sean compatibles con DatePicker
+        const valoresFormateados = {
+          ...data,
+          f_etd: data.f_etd ? dayjs(data.f_etd) : null,
+          f_eta: data.f_eta ? dayjs(data.f_eta) : null,
+          f_envio_soc: data.f_envio_soc ? dayjs(data.f_envio_soc) : null,
+          f_envio_dctos_intercomex: data.f_envio_dctos_intercomex ? dayjs(data.f_envio_dctos_intercomex) : null,
+          f_pago_proveedor: data.f_pago_proveedor ? dayjs(data.f_pago_proveedor) : null,
+          f_pago_derechos: data.f_pago_derechos ? dayjs(data.f_pago_derechos) : null,
+        };
+
+        form.setFieldsValue(valoresFormateados);
+        notification.info({
+          message: `Precargada operación #${id}`,
+          description: 'Puede editar los campos antes de guardar.',
+        });
+      } catch (error) {
+        notification.error({ message: 'Error al precargar la operación' });
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchClientesProveedores();
-  }, []);
+    fetchOperacion();
+  }, [id, form]);
 
   const handleFormError = (errorInfo) => {
     const errorField = errorInfo.errorFields?.[0];
     if (errorField) {
       const fieldName = errorField.name[0];
       const tabMap = {
-        // Tab 1
         numero_orden_compra: '1',
         carpeta_onedrive: '1',
         numero_doc_solicitud: '1',
         numero_factura_proveedor: '1',
-
-        // Tab 2
         cliente_id: '1',
         proveedor_id: '1',
         f_envio_soc: '1',
         incoterm: '1',
         moneda: '1',
         calidad: '1',
-
-        // Tab 3    
         tipo_transporte: '2',
         numero_bl_awb_crt: '2',
         puerto_embarque: '2',
@@ -72,6 +102,7 @@ const OperacionesCrearPage = () => {
         f_etd: '2',
         f_eta: '2',
         f_envio_dctos_intercomex: '2',
+        tipo_transporte: '3',
         f_pago_proveedor: '3',
         f_pago_derechos: '3',
         dias_libres: '3',
@@ -96,7 +127,8 @@ const OperacionesCrearPage = () => {
   return (
     <ConfigProvider locale={esES}>
       <div className="page-full">
-        <h1>Crear Operación</h1>
+        <h1>{id ? 'Crear operación desde plantilla' : 'Crear Operación'}</h1>
+
         <div className="page-form-medio">
           <Form
             form={form}
@@ -119,7 +151,12 @@ const OperacionesCrearPage = () => {
             </Tabs>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ marginRight: '10px' }}
+                loading={loading}
+              >
                 Crear operación
               </Button>
               <Button

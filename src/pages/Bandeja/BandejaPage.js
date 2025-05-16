@@ -87,7 +87,6 @@ const BandejaPage = () => {
 
   return (
     <div className="page-full bandeja-container">
-      <h1 className="bandeja-title">Logística de Operaciones</h1>
       {loading ? (
         <Spin size="large" />
       ) : (
