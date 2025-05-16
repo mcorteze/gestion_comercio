@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Table, Input, Space, Button, Tooltip, Row, Col, message, Modal } from 'antd';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { FaTrashAlt } from 'react-icons/fa';
+import { RiEdit2Line } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
 
 import './ClientesPage.css';
@@ -87,11 +88,12 @@ const ClientesPage = () => {
     {
       title: 'Acciones',
       key: 'acciones',
+      width: 80,
       render: (_, record) => (
         <Space size="small">
           <Tooltip title="Modificar">
             <Button
-              icon={<FaEdit />}
+              icon={<RiEdit2Line />}
               onClick={() => handleEdit(record.id)}
               className="action-button edit"
             />

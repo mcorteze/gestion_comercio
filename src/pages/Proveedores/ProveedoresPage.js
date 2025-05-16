@@ -92,6 +92,7 @@ const ProveedoresPage = () => {
     {
       title: 'Acciones',
       key: 'acciones',
+      width: 80,
       render: (_, record) => (
         <Space size="small">
           <Tooltip title="Modificar">

@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {
-  Form,
-  Input,
-  DatePicker,
-  Button,
-  Spin,
-  Row,
-  Col,
-  Tooltip,
-} from 'antd';
+import { Form, Spin, Tooltip, Tabs } from 'antd';
+import { MessageOutlined } from '@ant-design/icons';
+import { LuBox } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import LogisticaComentarios from '../../components/Logistica/LogisticaComentarios';
+import LogisticaCampos from '../../components/Logistica/LogisticaCampos';
+import LogisticaProductos from '../../components/Logistica/LogisticaProductos';
 import './LogisticaEditarPage.css';
+
+const { TabPane } = Tabs;
 
 const LogisticaEditarPage = () => {
   const { id } = useParams();
@@ -21,6 +18,10 @@ const LogisticaEditarPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [comentariosCount, setComentariosCount] = useState(0);
+  const [productosCount, setProductosCount] = useState(0);
+
+  // Fetch operación
   useEffect(() => {
     const fetchOperacion = async () => {
       try {
@@ -49,6 +50,25 @@ const LogisticaEditarPage = () => {
     fetchOperacion();
   }, [id, form]);
 
+  // Fetch counts
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const [comentariosRes, productosRes] = await Promise.all([
+          axios.get(`http://localhost:3001/api/operaciones/${id}/comentarios/count`),
+          axios.get(`http://localhost:3001/api/operaciones/${id}/productos/count`),
+        ]);
+
+        setComentariosCount(comentariosRes.data.count);
+        setProductosCount(productosRes.data.count);
+      } catch (error) {
+        console.error('Error al obtener conteos de productos/comentarios', error);
+      }
+    };
+
+    fetchCounts();
+  }, [id]);
+
   const renderLabel = (text) => (
     <Tooltip title={text}>
       <span className="form-label-ellipsis">{text}</span>
@@ -64,101 +84,36 @@ const LogisticaEditarPage = () => {
 
   return (
     <div style={{ display: 'flex', gap: '24px' }}>
-      {/* Primera columna (formulario) */}
       <div className="page-full logistica-editar-form" style={{ flex: '0 0 350px', maxWidth: '350px' }}>
         <h1>Editar Logística de Operación #{id}</h1>
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          
-          {/* Campo ID solo en la primera fila */}
-          <Form.Item name="id" label={renderLabel('ID')} style = {{ width: '100px' }} >
-            <Input disabled />
-          </Form.Item>
-
-          {/* Resto del formulario en filas de dos columnas */}
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="tipo_transporte" label={renderLabel('Tipo Transporte')}>
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="numero_bl_awb_crt" label={renderLabel('Número BL/AWB/CRT')}>
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="puerto_embarque" label={renderLabel('Puerto Embarque')}>
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="puerto_destino" label={renderLabel('Puerto Destino')}>
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="f_etd" label={renderLabel('Fecha ETD')}>
-                <DatePicker style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="f_eta" label={renderLabel('Fecha ETA')}>
-                <DatePicker style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="f_envio_dctos_intercomex" label={renderLabel('Fecha Envío Dctos Intercomex')}>
-                <DatePicker style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="f_pago_proveedor" label={renderLabel('Fecha Pago Proveedor')}>
-                <DatePicker style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="f_pago_derechos" label={renderLabel('Fecha Pago Derechos')}>
-                <DatePicker style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="dias_libres" label={renderLabel('Días Libres')}>
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="condicion_pago_dias" label={renderLabel('Condición Pago Días')}>
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Guardar Cambios
-            </Button>
-          </Form.Item>
-        </Form>
+        <LogisticaCampos form={form} onFinish={handleSubmit} renderLabel={renderLabel} />
       </div>
 
-      {/* Segunda columna (comentarios) */}
       <div style={{ flex: 1 }}>
-        <LogisticaComentarios operacionId={id} />
+        <Tabs defaultActiveKey="1">
+  <TabPane
+    tab={
+      <span>
+        <LuBox style={{ marginRight: 8 }} />
+        Productos ({productosCount})
+      </span>
+    }
+    key="1"
+  >
+    <LogisticaProductos operacionId={id} />
+  </TabPane>
+  <TabPane
+    tab={
+      <span>
+        <MessageOutlined style={{ marginRight: 8 }} />
+        Comentarios ({comentariosCount})
+      </span>
+    }
+    key="2"
+  >
+    <LogisticaComentarios operacionId={id} />
+  </TabPane>
+</Tabs>
       </div>
     </div>
   );

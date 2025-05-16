@@ -512,6 +512,36 @@ app.delete('/api/operaciones/:id', async (req, res) => {
   }
 });
 
+// Actualizar campo "destacado" de una operación
+app.patch('/api/operaciones/:id/destacado', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { destacado } = req.body;
+
+    // Validación básica del valor recibido
+    if (typeof destacado !== 'boolean') {
+      return res.status(400).json({ error: '"destacado" debe ser true o false' });
+    }
+
+    // Verificamos que la operación exista
+    const check = await pool.query('SELECT id FROM operaciones WHERE id = $1', [id]);
+    if (check.rows.length === 0) {
+      return res.status(404).json({ error: 'Operación no encontrada' });
+    }
+
+    // Actualizamos el campo "destacado"
+    await pool.query(
+      'UPDATE operaciones SET destacado = $1 WHERE id = $2',
+      [destacado, id]
+    );
+
+    res.json({ message: 'Campo "destacado" actualizado correctamente', destacado });
+  } catch (error) {
+    console.error('Error al actualizar "destacado":', error);
+    res.status(500).json({ error: 'Error al actualizar el campo "destacado"' });
+  }
+});
+
 // ************************************************
 //          OPERACIONES COMENTARIOS
 // ************************************************
@@ -599,7 +629,181 @@ app.delete('/api/operaciones_comentarios/:id', async (req, res) => {
   }
 });
 
+// Contar comentarios por operación
+app.get('/api/operaciones/:id/comentarios/count', async (req, res) => {
+  try {
+    const { id } = req.params;
 
+    const result = await pool.query(
+      'SELECT COUNT(*) FROM operaciones_comentarios WHERE id_operacion = $1',
+      [id]
+    );
+
+    res.status(200).json({ count: parseInt(result.rows[0].count, 10) });
+  } catch (error) {
+    console.error('Error al contar comentarios', error);
+    res.status(500).json({ error: 'Error al contar comentarios' });
+  }
+});
+
+// ************************************************
+//          PRODUCTOS POR OPERACIÓN
+// ************************************************
+
+// Crear un nuevo producto
+app.post('/api/productos', async (req, res) => {
+  try {
+    const {
+      operacion_id,
+      codigo_sku,
+      descripcion_producto,
+      categoria_area,
+      tipo_producto,
+      unidad_medida,
+      cantidad_solicitada,
+      cantidad_facturada,
+      precio_unitario,
+      costo_total
+    } = req.body;
+
+    if (
+      !operacion_id || !codigo_sku || !descripcion_producto ||
+      !categoria_area || !tipo_producto || !unidad_medida ||
+      cantidad_solicitada == null || cantidad_facturada == null ||
+      precio_unitario == null || costo_total == null
+    ) {
+      return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO productos (
+        operacion_id, codigo_sku, descripcion_producto,
+        categoria_area, tipo_producto, unidad_medida,
+        cantidad_solicitada, cantidad_facturada,
+        precio_unitario, costo_total
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+      RETURNING *`,
+      [
+        operacion_id, codigo_sku, descripcion_producto,
+        categoria_area, tipo_producto, unidad_medida,
+        cantidad_solicitada, cantidad_facturada,
+        precio_unitario, costo_total
+      ]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al crear producto', error);
+    res.status(500).json({ error: 'Error al crear el producto' });
+  }
+});
+
+// Obtener productos por operación
+app.get('/api/operaciones/:operacion_id/productos', async (req, res) => {
+  try {
+    const { operacion_id } = req.params;
+    const result = await pool.query(
+      'SELECT * FROM productos WHERE operacion_id = $1 ORDER BY id ASC',
+      [operacion_id]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener productos', error);
+    res.status(500).json({ error: 'Error al obtener los productos' });
+  }
+});
+
+// Editar un producto por ID
+app.put('/api/productos/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      codigo_sku,
+      descripcion_producto,
+      categoria_area,
+      tipo_producto,
+      unidad_medida,
+      cantidad_solicitada,
+      cantidad_facturada,
+      precio_unitario,
+      costo_total
+    } = req.body;
+
+    const result = await pool.query(
+      `UPDATE productos SET
+        codigo_sku = $1,
+        descripcion_producto = $2,
+        categoria_area = $3,
+        tipo_producto = $4,
+        unidad_medida = $5,
+        cantidad_solicitada = $6,
+        cantidad_facturada = $7,
+        precio_unitario = $8,
+        costo_total = $9
+      WHERE id = $10
+      RETURNING *`,
+      [
+        codigo_sku,
+        descripcion_producto,
+        categoria_area,
+        tipo_producto,
+        unidad_medida,
+        cantidad_solicitada,
+        cantidad_facturada,
+        precio_unitario,
+        costo_total,
+        id
+      ]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al actualizar producto', error);
+    res.status(500).json({ error: 'Error al actualizar el producto' });
+  }
+});
+
+// Eliminar un producto por ID
+app.delete('/api/productos/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      'DELETE FROM productos WHERE id = $1 RETURNING *',
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
+    res.status(200).json({ mensaje: 'Producto eliminado', producto: result.rows[0] });
+  } catch (error) {
+    console.error('Error al eliminar producto', error);
+    res.status(500).json({ error: 'Error al eliminar el producto' });
+  }
+});
+
+// Contar productos por operación
+app.get('/api/operaciones/:id/productos/count', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      'SELECT COUNT(*) FROM productos WHERE operacion_id = $1',
+      [id]
+    );
+
+    res.status(200).json({ count: parseInt(result.rows[0].count, 10) });
+  } catch (error) {
+    console.error('Error al contar productos', error);
+    res.status(500).json({ error: 'Error al contar productos' });
+  }
+});
 
 
 

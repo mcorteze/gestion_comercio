@@ -201,6 +201,15 @@
   border: 1px solid #ddd !important;
 }
 
+.ant-table-content table thead tr th {
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+}
+
+.ant-table-content table {
+    border-collapse: separate !important;
+}
+
 /* Estilo para asegurar consistencia en los bordes de todas las tablas */
 .custom-table,
 .ant-descriptions-view table,

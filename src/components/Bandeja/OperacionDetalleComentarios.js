@@ -4,7 +4,7 @@ import { List, Card, Spin, Alert, Modal, Button, Input, Form, message } from 'an
 import moment from 'moment';
 import './LogisticaComentarios.css';
 
-const LogisticaComentarios = ({ operacionId }) => {
+const OperacionDetalleComentarios = ({ operacionId }) => {
   const [comentarios, setComentarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -207,4 +207,4 @@ const LogisticaComentarios = ({ operacionId }) => {
   );
 };
 
-export default LogisticaComentarios;
+export default OperacionDetalleComentarios;

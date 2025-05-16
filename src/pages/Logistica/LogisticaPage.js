@@ -1,97 +1,81 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, Input, Space, Tag, Radio } from 'antd';
+import { Input, Space, Button } from 'antd';
+import OperacionesTable from '../../components/Logistica/OperacionesTable';
 
 const normalizeText = (text) => {
-  return text
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim();
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 };
-
-const formatDateTime = (text) => {
-  const date = new Date(text);
-  const pad = (n) => n.toString().padStart(2, '0');
-  const formattedDate = `${pad(date.getDate())}-${pad(date.getMonth() + 1)}-${date.getFullYear()}`;
-  const formattedTime = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-  return `${formattedDate}, ${formattedTime}`;
-};
-
 
 const formatDateTime_Simple = (text) => {
   const date = new Date(text);
   const pad = (n) => n.toString().padStart(2, '0');
-  const formattedDate = `${pad(date.getDate())}-${pad(date.getMonth() + 1)}-${date.getFullYear()}`;
-  return `${formattedDate}`;
+  return `${pad(date.getDate())}-${pad(date.getMonth() + 1)}-${date.getFullYear()}`;
 };
 
 const LogisticaPage = () => {
   const [operaciones, setOperaciones] = useState([]);
-  const [filteredOperaciones, setFilteredOperaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchText, setSearchText] = useState('');
-  const [selectedState, setSelectedState] = useState(''); // Estado seleccionado para filtrar
+  const [clientes, setClientes] = useState([]);
+  const [proveedores, setProveedores] = useState([]);
+  const [columnFilters, setColumnFilters] = useState({});
 
   useEffect(() => {
-    const fetchOperaciones = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/operaciones');
-        setOperaciones(response.data);
-        setFilteredOperaciones(response.data);
+        const [operacionesRes, clientesRes, proveedoresRes] = await Promise.all([
+          axios.get('http://localhost:3001/api/operaciones'),
+          axios.get('http://localhost:3001/api/clientes'),
+          axios.get('http://localhost:3001/api/proveedores'),
+        ]);
+        setOperaciones(operacionesRes.data);
+        setClientes(clientesRes.data);
+        setProveedores(proveedoresRes.data);
       } catch (err) {
-        setError('Error al obtener las operaciones');
+        setError('Error al obtener los datos');
       } finally {
         setLoading(false);
       }
     };
-
-    fetchOperaciones();
+    fetchData();
   }, []);
 
+  const getProveedorNombre = (id) => {
+    const proveedor = proveedores.find((p) => p.id === id);
+    return proveedor ? proveedor.nombre : '—';
+  };
+
   const handleSearch = (value) => {
-    const query = normalizeText(value);
-
-    const filtered = operaciones.filter((op) => {
-      const numeroOrden = normalizeText(op.numero_orden_compra || '');
-      const numeroFactura = normalizeText(op.numero_factura_proveedor || '');
-      return numeroOrden.includes(query) || numeroFactura.includes(query);
-    });
-
-    setFilteredOperaciones(filtered);
     setSearchText(value.trim());
   };
 
-  const handleStateChange = (e) => {
-    setSelectedState(e.target.value);
+  const handleColumnFilterChange = (columnKey, selectedValues) => {
+    setColumnFilters((prev) => ({
+      ...prev,
+      [columnKey]: selectedValues,
+    }));
   };
 
-  const filteredByState = (state) => {
-    if (!state) return operaciones; // Si no hay filtro, mostrar todas las operaciones
-    return operaciones.filter((op) => normalizeText(op.estado).includes(normalizeText(state)));
+  const clearAllFilters = () => {
+    setColumnFilters({});
   };
 
-  const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Tipo Transporte', dataIndex: 'tipo_transporte', key: 'tipo_transporte' },
-    { title: 'Número BL/AWB/CRT', dataIndex: 'numero_bl_awb_crt', key: 'numero_bl_awb_crt' },
-    { title: 'Puerto Embarque', dataIndex: 'puerto_embarque', key: 'puerto_embarque' },
-    { title: 'Puerto Destino', dataIndex: 'puerto_destino', key: 'puerto_destino' },
-    { title: 'Fecha ETD', dataIndex: 'f_etd', key: 'f_etd', render: formatDateTime_Simple },
-    { title: 'Fecha ETA', dataIndex: 'f_eta', key: 'f_eta', render: formatDateTime_Simple },
-    { title: 'Fecha Envío Dctos Intercomex', dataIndex: 'f_envio_dctos_intercomex', key: 'f_envio_dctos_intercomex', render: formatDateTime_Simple },
-    { title: 'Fecha Pago Proveedor', dataIndex: 'f_pago_proveedor', key: 'f_pago_proveedor', render: formatDateTime_Simple },
-    { title: 'Fecha Pago Derechos', dataIndex: 'f_pago_derechos', key: 'f_pago_derechos', render: formatDateTime_Simple },
-    { title: 'Días Libres', dataIndex: 'dias_libres', key: 'dias_libres' },
-    { title: 'Condición Pago Días', dataIndex: 'condicion_pago_dias', key: 'condicion_pago_dias' },
-  ];
-  
+  const filteredData = operaciones.filter((op) => {
+    const query = normalizeText(searchText);
+    const numeroOrden = normalizeText(op.numero_orden_compra || '');
+    const numeroBL = normalizeText(op.numero_bl_awb_crt || '');
 
-  // Extraemos todos los estados únicos de las operaciones
-  const estados = [...new Set(operaciones.map((op) => op.estado))];
+    const matchesSearch = numeroOrden.includes(query) || numeroBL.includes(query);
+    const matchesFilters = Object.entries(columnFilters).every(([key, selected]) => {
+      if (!selected || selected.length === 0) return true;
+      const value = key === 'proveedor_id' ? getProveedorNombre(op[key]) : op[key];
+      return selected.includes(value);
+    });
 
-  const filteredData = filteredByState(selectedState); // Filtrar operaciones por estado seleccionado
+    return matchesSearch && matchesFilters;
+  });
 
   if (error) return <div>Error: {error}</div>;
   if (loading) return <div>Cargando...</div>;
@@ -101,22 +85,20 @@ const LogisticaPage = () => {
       <h1>Logística de operaciones</h1>
       <Space direction="vertical" style={{ marginBottom: 16 }}>
         <Input.Search
-          placeholder="Buscar por orden de compra o factura"
-          enterButton="Buscar"
-          onSearch={handleSearch}
+          placeholder="Buscar por orden de compra o número BL AWB CRT"
           allowClear
+          onChange={(e) => handleSearch(e.target.value)}
         />
-        {/* Segmentador de estados */}
-        <Radio.Group onChange={handleStateChange} value={selectedState}>
-          <Radio.Button value="">Todos</Radio.Button>
-          {estados.map((estado) => (
-            <Radio.Button key={estado} value={estado}>
-              {estado}
-            </Radio.Button>
-          ))}
-        </Radio.Group>
+        <Button onClick={clearAllFilters}>Limpiar todos los filtros</Button>
       </Space>
-      <Table dataSource={filteredData} columns={columns} rowKey="id" scroll={{ x: 'max-content' }} />
+      <OperacionesTable
+        operaciones={operaciones}
+        columnFilters={columnFilters}
+        handleColumnFilterChange={handleColumnFilterChange}
+        getProveedorNombre={getProveedorNombre}
+        formatDateTime_Simple={formatDateTime_Simple}
+        filteredData={filteredData}
+      />
     </div>
   );
 };

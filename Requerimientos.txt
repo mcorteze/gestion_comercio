@@ -1,0 +1,25 @@
+Mejorar: Para buscar una operación usaba filtro de Excel para ver existencias y en orden alfabético.
+Cuando crea operación sugerir valores de operaciones anteriores.
+Crear una operación en blanco o cargando una operación anterior.
+productos asociados a una operación.
+
+Vista logística:
+	-objetivo: seguimiento, identificador es bl, seguir pago.
+
+Vista seguimiento exterior:
+	identificador bl, se usa para consultar en la pagina y se rectifica eta(1 vez) y etd(frecuentemente).
+	también se agregan comentarios
+Vista seguimiento nacional
+	Se registra en comentarios
+
+Definir estado inicial cuando se pasa la orden de preparación y se espera la respuesta de producción, esperando la orden de confirmación
+En preparación
+Trayecto internacional
+Internación
+Trayecto nacional
+Entregado a bodega
+Proceso de costeo
+Completado
+
+
+

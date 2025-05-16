@@ -1,0 +1,94 @@
+.log-prod-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fff;
+  width: 100%;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.log-prod-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0px;
+  flex-wrap: wrap;
+}
+
+.log-prod-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 1;
+}
+
+.log-prod-icon {
+  font-size: 20px;
+  color: #1890ff;
+}
+
+.log-prod-sku {
+  color: #333;
+}
+
+.log-prod-header-info {
+  color: #666;
+  flex: 1;
+  text-align: center;
+}
+
+.log-prod-header-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.log-icon-button {
+  font-size: 13px;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s ease;
+}
+
+.log-icon-button:hover {
+  color: #1890ff;
+}
+
+.log-icon-button.delete:hover {
+  color: #e53935;
+}
+
+.log-prod-info {
+  color: #444;
+}
+
+.log-prod-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0px 16px;
+}
+
+.log-prod-descripcion {
+  color: #555;
+}
+
+.log-prod-index {
+  font-weight: bold;
+  font-size: 14px;
+  color: #555;
+  background-color: #f0f2f5;
+  border-radius: 4px;
+  padding: 2px 6px;
+  align-self: flex-start;
+  margin-bottom: 4px;
+  width: fit-content;
+}
+
+.log-prod-scrollable {
+  max-height: 440px;
+  overflow-y: auto;
+}
+
