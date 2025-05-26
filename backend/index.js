@@ -318,16 +318,22 @@ app.post('/api/operaciones', async (req, res) => {
       calidad,
       estado,
       tipo_transporte,
+      transporte,  // <-- nuevo campo
       numero_bl_awb_crt,
       puerto_embarque,
       puerto_destino,
       f_etd,
       f_eta,
+      f_etb,
       f_envio_dctos_intercomex,
       f_pago_proveedor,
       f_pago_derechos,
       dias_libres,
-      condicion_pago_dias
+      condicion_pago_dias,
+      numero_confirmacion_orden,
+      etd_confirmada,
+      eta_confirmada,
+      etb_confirmada
     } = req.body;
 
     if (!numero_orden_compra || !cliente_id || !proveedor_id || !estado) {
@@ -348,19 +354,26 @@ app.post('/api/operaciones', async (req, res) => {
         calidad,
         estado,
         tipo_transporte,
+        transporte,            -- nuevo campo
         numero_bl_awb_crt,
         puerto_embarque,
         puerto_destino,
         f_etd,
         f_eta,
+        f_etb,
         f_envio_dctos_intercomex,
         f_pago_proveedor,
         f_pago_derechos,
         dias_libres,
-        condicion_pago_dias
+        condicion_pago_dias,
+        numero_confirmacion_orden,
+        etd_confirmada,
+        eta_confirmada,
+        etb_confirmada
       ) VALUES (
-        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,
-        $12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+        $11, $12, $13, $14, $15, $16, $17, $18,
+        $19, $20, $21, $22, $23, $24, $25, $26, $27, $28
       )
       RETURNING *`,
       [
@@ -376,16 +389,22 @@ app.post('/api/operaciones', async (req, res) => {
         calidad,
         estado,
         tipo_transporte,
+        transporte,             // nuevo valor
         numero_bl_awb_crt,
         puerto_embarque,
         puerto_destino,
         f_etd,
         f_eta,
+        f_etb,
         f_envio_dctos_intercomex,
         f_pago_proveedor,
         f_pago_derechos,
         dias_libres,
-        condicion_pago_dias
+        condicion_pago_dias,
+        numero_confirmacion_orden,
+        etd_confirmada,
+        eta_confirmada,
+        etb_confirmada
       ]
     );
 
@@ -412,16 +431,22 @@ app.put('/api/operaciones/:id', async (req, res) => {
       calidad,
       estado,
       tipo_transporte,
+      transporte,    // <-- nuevo campo
       numero_bl_awb_crt,
       puerto_embarque,
       puerto_destino,
       f_etd,
       f_eta,
+      f_etb,
       f_envio_dctos_intercomex,
       f_pago_proveedor,
       f_pago_derechos,
       dias_libres,
-      condicion_pago_dias
+      condicion_pago_dias,
+      numero_confirmacion_orden,
+      etd_confirmada,
+      eta_confirmada,
+      etb_confirmada
     } = req.body;
 
     if (!numero_orden_compra || !cliente_id || !proveedor_id || !estado) {
@@ -442,18 +467,24 @@ app.put('/api/operaciones/:id', async (req, res) => {
         calidad = $10,
         estado = $11,
         tipo_transporte = $12,
-        numero_bl_awb_crt = $13,
-        puerto_embarque = $14,
-        puerto_destino = $15,
-        f_etd = $16,
-        f_eta = $17,
-        f_envio_dctos_intercomex = $18,
-        f_pago_proveedor = $19,
-        f_pago_derechos = $20,
-        dias_libres = $21,
-        condicion_pago_dias = $22,
+        transporte = $13,            -- nuevo campo
+        numero_bl_awb_crt = $14,
+        puerto_embarque = $15,
+        puerto_destino = $16,
+        f_etd = $17,
+        f_eta = $18,
+        f_etb = $19,
+        f_envio_dctos_intercomex = $20,
+        f_pago_proveedor = $21,
+        f_pago_derechos = $22,
+        dias_libres = $23,
+        condicion_pago_dias = $24,
+        numero_confirmacion_orden = $25,
+        etd_confirmada = $26,
+        eta_confirmada = $27,
+        etb_confirmada = $28,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = $23
+      WHERE id = $29
       RETURNING *`,
       [
         numero_orden_compra,
@@ -468,16 +499,22 @@ app.put('/api/operaciones/:id', async (req, res) => {
         calidad,
         estado,
         tipo_transporte,
+        transporte,                 // nuevo valor
         numero_bl_awb_crt,
         puerto_embarque,
         puerto_destino,
         f_etd,
         f_eta,
+        f_etb,
         f_envio_dctos_intercomex,
         f_pago_proveedor,
         f_pago_derechos,
         dias_libres,
         condicion_pago_dias,
+        numero_confirmacion_orden,
+        etd_confirmada,
+        eta_confirmada,
+        etb_confirmada,
         id
       ]
     );
@@ -492,6 +529,7 @@ app.put('/api/operaciones/:id', async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar la operación' });
   }
 });
+
 
 
 // Eliminar operación
@@ -805,8 +843,131 @@ app.get('/api/operaciones/:id/productos/count', async (req, res) => {
   }
 });
 
+// *********************************************
+//            ALIAS CAMPOS
+// *********************************************
 
+// Obtener todos los alias
+app.get('/api/alias-campos', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM alias_campos ORDER BY nombre_tabla, nombre_campo;');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener alias:', error);
+    res.status(500).json({ error: 'Error al obtener los alias' });
+  }
+});
 
+// Obtener alias por nombre de tabla
+app.get('/api/alias-campos/tabla/:nombreTabla', async (req, res) => {
+  try {
+    const { nombreTabla } = req.params;
+    const result = await pool.query('SELECT * FROM alias_campos WHERE nombre_tabla = $1', [nombreTabla]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener alias por tabla:', error);
+    res.status(500).json({ error: 'Error al obtener los alias por tabla' });
+  }
+});
+
+// Crear alias nuevo
+app.post('/api/alias-campos', async (req, res) => {
+  try {
+    const { nombre_tabla, nombre_campo, alias } = req.body;
+
+    if (!nombre_tabla || !nombre_campo || !alias) {
+      return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO alias_campos (nombre_tabla, nombre_campo, alias)
+       VALUES ($1, $2, $3)
+       RETURNING *`,
+      [nombre_tabla, nombre_campo, alias]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al crear alias:', error);
+    res.status(500).json({ error: 'Error al crear el alias' });
+  }
+});
+
+// Actualizar un alias
+app.put('/api/alias-campos/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { alias } = req.body;
+
+    if (!alias) {
+      return res.status(400).json({ error: 'El campo alias es obligatorio' });
+    }
+
+    const result = await pool.query(
+      `UPDATE alias_campos
+       SET alias = $1, fecha_actualizacion = NOW()
+       WHERE id = $2
+       RETURNING *`,
+      [alias, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Alias no encontrado' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al actualizar alias:', error);
+    res.status(500).json({ error: 'Error al actualizar el alias' });
+  }
+});
+
+// Eliminar alias
+app.delete('/api/alias-campos/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('DELETE FROM alias_campos WHERE id = $1 RETURNING *', [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Alias no encontrado' });
+    }
+
+    res.json({ mensaje: 'Alias eliminado correctamente', alias: result.rows[0] });
+  } catch (error) {
+    console.error('Error al eliminar alias:', error);
+    res.status(500).json({ error: 'Error al eliminar el alias' });
+  }
+});
+
+// *********************************************
+//            VIEWS
+// *********************************************
+app.get('/api/operaciones_ultimamodificacion', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM operaciones_ultimamodificacion ORDER BY id;');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error en la consulta a la base de datos', error);
+    res.status(500).json({ error: 'Hubo un error al obtener el informe resumensimple' });
+  }
+});
+// Historial operación
+app.get('/api/operacion_historial/:id', async (req, res) => {
+  const idOperacion = parseInt(req.params.id, 10);
+  if (isNaN(idOperacion)) {
+    return res.status(400).json({ error: 'ID de operación inválido' });
+  }
+
+  try {
+    const query = 'SELECT * FROM historial_operacion($1) ORDER BY f_cambio;';
+    const result = await pool.query(query, [idOperacion]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error en la consulta a la base de datos', error);
+    res.status(500).json({ error: 'Hubo un error al obtener el historial de la operación' });
+  }
+});
 // ************************************************
 // ************************************************
 // ************************************************

@@ -3,3 +3,19 @@
     background-color: #ffffff !important;
     padding: 8px 12px;
 }
+
+.tabs-header-container {
+  margin-bottom: 16px;
+}
+
+.tabs-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.maximize-icon {
+  font-size: 18px;
+  cursor: pointer;
+  margin-left: 12px;
+}

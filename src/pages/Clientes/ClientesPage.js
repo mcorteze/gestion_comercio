@@ -80,35 +80,13 @@ const ClientesPage = () => {
   };
 
   const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Nombre', dataIndex: 'nombre', key: 'nombre' },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
-    { title: 'Teléfono', dataIndex: 'telefono', key: 'telefono' },
-    { title: 'Dirección', dataIndex: 'direccion', key: 'direccion' },
-    {
-      title: 'Acciones',
-      key: 'acciones',
-      width: 80,
-      render: (_, record) => (
-        <Space size="small">
-          <Tooltip title="Modificar">
-            <Button
-              icon={<RiEdit2Line />}
-              onClick={() => handleEdit(record.id)}
-              className="action-button edit"
-            />
-          </Tooltip>
-          <Tooltip title="Eliminar">
-            <Button
-              icon={<FaTrashAlt />}
-              onClick={() => handleDelete(record.id)}
-              className="action-button danger"
-            />
-          </Tooltip>
-        </Space>
-      ),
-    },
-  ];
+  { title: 'ID', dataIndex: 'id', key: 'id', width: 40, sorter: (a, b) => a.id - b.id },
+  { title: 'Nombre', dataIndex: 'nombre', key: 'nombre', width: 120, sorter: (a, b) => (a.nombre || '').localeCompare(b.nombre || '') },
+  { title: 'Email', dataIndex: 'email', key: 'email', width: 100, sorter: (a, b) => (a.email || '').localeCompare(b.email || '') },
+  { title: 'Teléfono', dataIndex: 'telefono', key: 'telefono', width: 150, sorter: (a, b) => (a.telefono || '').localeCompare(b.telefono || '') },
+  { title: 'Dirección', dataIndex: 'direccion', key: 'direccion', width: 200, sorter: (a, b) => (a.direccion || '').localeCompare(b.direccion || '') },
+  { title: 'Acciones', key: 'acciones', width: 100, render: (_, record) => (<Space size="small"><Tooltip title="Modificar"><Button icon={<RiEdit2Line />} onClick={() => handleEdit(record.id)} className="action-button edit" /></Tooltip><Tooltip title="Eliminar"><Button icon={<FaTrashAlt />} onClick={() => handleDelete(record.id)} className="action-button danger" /></Tooltip></Space>) },
+];
 
   if (error) return <div>Error: {error}</div>;
   if (loading) return <div>Cargando...</div>;
@@ -125,7 +103,7 @@ const ClientesPage = () => {
         />
       </Space>
 
-      <Row justify="end" style={{ marginBottom: 8 }}>
+      <Row justify="start" style={{ marginBottom: 20 }}>
         <Col>
           <Button type="primary" onClick={handleAddClient}>
             Agregar cliente

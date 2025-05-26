@@ -152,7 +152,7 @@
 
 /* Si está destacada, la estrella es visible siempre */
 .estrella-activa {
-  color: #fadb14 !important;
+  color: crimson !important;
   opacity: 1 !important;
 }
 

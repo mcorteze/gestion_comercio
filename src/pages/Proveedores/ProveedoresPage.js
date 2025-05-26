@@ -84,35 +84,14 @@ const ProveedoresPage = () => {
   };
 
   const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Nombre', dataIndex: 'nombre', key: 'nombre' },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
-    { title: 'País', dataIndex: 'pais', key: 'pais' },
-    { title: 'Cond. Pago (días)', dataIndex: 'condicion_pago_dias', key: 'condicion_pago_dias' },
-    {
-      title: 'Acciones',
-      key: 'acciones',
-      width: 80,
-      render: (_, record) => (
-        <Space size="small">
-          <Tooltip title="Modificar">
-            <Button
-              icon={<FaEdit />}
-              onClick={() => handleEdit(record.id)}
-              className="action-button edit"
-            />
-          </Tooltip>
-          <Tooltip title="Eliminar">
-            <Button
-              icon={<FaTrashAlt />}
-              onClick={() => handleDelete(record.id)}
-              className="action-button danger"
-            />
-          </Tooltip>
-        </Space>
-      ),
-    },
+    { title: 'ID', dataIndex: 'id', key: 'id', width: 40, sorter: (a, b) => a.id - b.id },
+    { title: 'Nombre', dataIndex: 'nombre', key: 'nombre', width: 200, sorter: (a, b) => (a.nombre || '').localeCompare(b.nombre || '') },
+    { title: 'Email', dataIndex: 'email', key: 'email', width: 100, sorter: (a, b) => (a.email || '').localeCompare(b.email || '') },
+    { title: 'País', dataIndex: 'pais', key: 'pais', width: 80, sorter: (a, b) => (a.pais || '').localeCompare(b.pais || '') },
+    { title: 'Cond. Pago (días)', dataIndex: 'condicion_pago_dias', key: 'condicion_pago_dias', width: 120, sorter: (a, b) => a.condicion_pago_dias - b.condicion_pago_dias },
+    { title: 'Acciones', key: 'acciones', width: 100, render: (_, record) => (<Space size="small"><Tooltip title="Modificar"><Button icon={<FaEdit />} onClick={() => handleEdit(record.id)} className="action-button edit" /></Tooltip><Tooltip title="Eliminar"><Button icon={<FaTrashAlt />} onClick={() => handleDelete(record.id)} className="action-button danger" /></Tooltip></Space>) },
   ];
+
 
   if (error) return <div>Error: {error}</div>;
   if (loading) return <div>Cargando...</div>;
@@ -129,7 +108,7 @@ const ProveedoresPage = () => {
         />
       </Space>
 
-      <Row justify="end" style={{ marginBottom: 8 }}>
+      <Row justify="start" style={{ marginBottom: 20 }}>
         <Col>
           <Button type="primary" onClick={handleAddProveedor}>
             Agregar proveedor

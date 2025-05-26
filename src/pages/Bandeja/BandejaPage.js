@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, List, Spin, Space, Row, Col, Tabs } from 'antd';
 import { FaStar, FaTrash } from 'react-icons/fa';
+import { IoFlagSharp } from "react-icons/io5";
 import axios from 'axios';
 import './BandejaPage.css';
 import OperacionDetalle from '../../components/Bandeja/OperacionDetalle';
@@ -104,7 +105,7 @@ const BandejaPage = () => {
           <Col xs={24} sm={9} md={7} className="bandeja-col-asuntos">
             <Tabs defaultActiveKey="todos" onChange={handleTabChange} className = "bandeja-asunto-tab" style={{ paddingInline: 30, marginBottom: 0 }}>
               <TabPane tab="Todos" key="todos" />
-              <TabPane tab="Destacados" key="destacados" />
+              <TabPane tab="Importantes" key="destacados" />
             </Tabs>
 
             <List
@@ -132,7 +133,7 @@ const BandejaPage = () => {
                           toggleDestacado(item.id, item.destacado);
                         }}
                       >
-                        <FaStar size={14} />
+                        <IoFlagSharp size={14} />
                       </span>
 
                       <span

@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Form, Spin, Tooltip, Tabs } from 'antd';
-import { MessageOutlined } from '@ant-design/icons';
+import { Form, Spin, Tooltip, Tabs,Button } from 'antd';
+import { MessageOutlined, HistoryOutlined  } from '@ant-design/icons';
 import { LuBox } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
+import { GrMoney } from "react-icons/gr";
+import { MdDateRange } from "react-icons/md";
 import moment from 'moment';
+
 import LogisticaComentarios from '../../components/Logistica/LogisticaComentarios';
-import LogisticaCampos from '../../components/Logistica/LogisticaCampos';
+import LogisticaIdentificacionSimple from '../../components/Logistica/LogisticaIdentificacionSimple';
 import LogisticaProductos from '../../components/Logistica/LogisticaProductos';
+import OperacionStepper from '../../components/Bandeja/OperacionStepper';
+
+import LogisticaEt from '../../components/Logistica/LogisticaEt';
+import LogisticaPagos from '../../components/Logistica/LogisticaPagos';
+import OperacionHistorial from '../Informes/OperacionHistorial';
+
 import './LogisticaEditarPage.css';
 
 const { TabPane } = Tabs;
 
 const LogisticaEditarPage = ({ id: propId }) => {
-  // Si no recibe id como prop, intenta obtenerlo del URL
   const { id: paramId } = useParams();
   const id = propId || paramId;
 
@@ -24,8 +32,10 @@ const LogisticaEditarPage = ({ id: propId }) => {
   const [comentariosCount, setComentariosCount] = useState(0);
   const [productosCount, setProductosCount] = useState(0);
 
+  const [historialVisible, setHistorialVisible] = useState(false);
+
   useEffect(() => {
-    if (!id) return; // Si no hay id, no hacer nada
+    if (!id) return;
 
     const fetchOperacion = async () => {
       try {
@@ -89,37 +99,88 @@ const LogisticaEditarPage = ({ id: propId }) => {
   if (!id) return <div>ID de operación no especificado</div>;
 
   return (
-    <div style={{ display: 'flex', gap: '24px' }}>
-      <div className="page-full logistica-editar-form" style={{ flex: '0 0 350px', maxWidth: '350px' }}>
-        <h1>Editar Logística de Operación #{id}</h1>
-        <LogisticaCampos form={form} onFinish={handleSubmit} renderLabel={renderLabel} />
+    <div className="page-full" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <h1>Logística de Operación #{id}</h1>
+      <div>
+        <OperacionStepper operacionId={id} />
       </div>
 
-      <div style={{ flex: 1 }}>
-        <Tabs defaultActiveKey="1">
-          <TabPane
-            tab={
-              <span>
-                <LuBox style={{ marginRight: 8 }} />
-                Productos ({productosCount})
-              </span>
-            }
-            key="1"
-          >
-            <LogisticaProductos operacionId={id} />
-          </TabPane>
-          <TabPane
-            tab={
-              <span>
-                <MessageOutlined style={{ marginRight: 8 }} />
-                Comentarios ({comentariosCount})
-              </span>
-            }
-            key="2"
-          >
-            <LogisticaComentarios operacionId={id} />
-          </TabPane>
-        </Tabs>
+      <div style={{ display: 'flex', gap: '24px' }}>
+        <div
+          className="logistica-editar-form"
+          style={{ flex: '0 0 350px', maxWidth: '350px' }}
+        >
+          <LogisticaIdentificacionSimple
+            form={form}
+            onFinish={handleSubmit}
+            renderLabel={renderLabel}
+          />
+        </div>
+
+        <div style={{ flex: 1, border: '1px solid #e0e0e0', backgroundColor: '#ffffff', padding: '8px 12px' }}>
+          <Tabs defaultActiveKey="1">
+            <TabPane
+              tab={
+                <span>
+                  <MdDateRange style={{ marginRight: 8 }} />
+                  ET
+                </span>
+              }
+              key="1"
+            >
+              <LogisticaEt operacionId={id} />
+            </TabPane>
+
+            <TabPane
+              tab={
+                <span>
+                  <GrMoney style={{ marginRight: 8 }} />
+                  Pagos
+                </span>
+              }
+              key="2"
+            >
+              <LogisticaPagos operacionId={id} />
+            </TabPane>
+
+            <TabPane
+              tab={
+                <span>
+                  <LuBox style={{ marginRight: 8 }} />
+                  Productos ({productosCount})
+                </span>
+              }
+              key="3"
+            >
+              <LogisticaProductos operacionId={id} />
+            </TabPane>
+
+            <TabPane
+              tab={
+                <span>
+                  <MessageOutlined style={{ marginRight: 8 }} />
+                  Comentarios ({comentariosCount})
+                </span>
+              }
+              key="4"
+            >
+              <LogisticaComentarios operacionId={id} />
+            </TabPane>
+            <TabPane
+              tab={
+                <span>
+                  <HistoryOutlined style={{ marginRight: 8 }} />
+                  Historial
+                </span>
+              }
+              key="5"
+            >
+              <OperacionHistorial operacionId={id} />
+            </TabPane>
+
+
+          </Tabs>
+        </div>
       </div>
     </div>
   );

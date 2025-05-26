@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Form, Spin, Tooltip, Tabs } from 'antd';
+import { Form, Spin, Tooltip, Tabs, Modal } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import { FaBarcode } from "react-icons/fa";
 import { LuBox } from "react-icons/lu";
+import { TbBrowserMaximize } from "react-icons/tb";
+import { LuHistory } from "react-icons/lu";
 import moment from 'moment';
 import LogisticaComentarios from './OperacionDetalleComentarios';
 import LogisticaProductos from '../Logistica/LogisticaProductos';
 import LogisticaCampos from './OperacionDetalleCampos';
+import LogisticaEditarPage from '../../pages/Logistica/LogisticaEditarPage';
+import OperacionHistorial from '../../pages/Informes/OperacionHistorial';
 import './OperacionDetalle.css';
 
 const OperacionDetalle = ({ operacionId }) => {
@@ -17,6 +21,8 @@ const OperacionDetalle = ({ operacionId }) => {
 
   const [comentariosCount, setComentariosCount] = useState(0);
   const [productosCount, setProductosCount] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [historialVisible, setHistorialVisible] = useState(false);
 
   useEffect(() => {
     if (!operacionId) return;
@@ -48,7 +54,6 @@ const OperacionDetalle = ({ operacionId }) => {
     fetchOperacion();
   }, [operacionId, form]);
 
-  // Fetch counts de comentarios y productos para mostrar en tabs
   useEffect(() => {
     if (!operacionId) return;
 
@@ -84,13 +89,30 @@ const OperacionDetalle = ({ operacionId }) => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="page-full logistica-editar-form">
+    <div className="page-full logistica-editar-form bandeja-detalles">
       <Tabs
         defaultActiveKey="1"
+        tabBarExtraContent={
+          <div style={{ display: 'flex', gap: 12 }}>
+            <Tooltip title="Ver historial de cambios">
+              <LuHistory
+                size={16}
+                style={{ cursor: 'pointer', color: '#52c41a' }}
+                onClick={() => setHistorialVisible(true)}
+              />
+            </Tooltip>
+            <Tooltip title="Maximizar">
+              <TbBrowserMaximize
+                style={{ fontSize: 16, cursor: 'pointer', color: '#1677ff' }}
+                onClick={() => setModalVisible(true)}
+              />
+            </Tooltip>
+          </div>
+        }
         items={[
           {
             key: '1',
-            label: 'Identificación',
+            label: 'Ident',
             icon: <FaBarcode />,
             children: (
               <LogisticaCampos
@@ -108,9 +130,7 @@ const OperacionDetalle = ({ operacionId }) => {
                 Cargas ({productosCount})
               </span>
             ),
-            children: (
-              <LogisticaProductos operacionId={operacionId} />
-            ),
+            children: <LogisticaProductos operacionId={operacionId} />,
           },
           {
             key: '3',
@@ -120,12 +140,33 @@ const OperacionDetalle = ({ operacionId }) => {
                 Comentarios ({comentariosCount})
               </span>
             ),
-            children: (
-              <LogisticaComentarios operacionId={operacionId} />
-            ),
+            children: <LogisticaComentarios operacionId={operacionId} />,
           },
         ]}
       />
+
+      <Modal
+        open={historialVisible}
+        onCancel={() => setHistorialVisible(false)}
+        footer={null}
+        width="fit-content"
+        style={{ top: 40 }}
+        destroyOnClose
+      >
+        <OperacionHistorial operacionId={operacionId} />
+      </Modal>
+
+
+      <Modal
+        open={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        footer={null}
+        width="90%"
+        style={{ top: 20 }}
+        destroyOnClose
+      >
+        <LogisticaEditarPage id={operacionId} />
+      </Modal>
     </div>
   );
 };

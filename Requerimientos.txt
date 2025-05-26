@@ -1,25 +1,48 @@
-Mejorar: Para buscar una operación usaba filtro de Excel para ver existencias y en orden alfabético.
+
 Cuando crea operación sugerir valores de operaciones anteriores.
-Crear una operación en blanco o cargando una operación anterior.
+LISTO: 
 productos asociados a una operación.
 
-Vista logística:
-	-objetivo: seguimiento, identificador es bl, seguir pago.
-
-Vista seguimiento exterior:
-	identificador bl, se usa para consultar en la pagina y se rectifica eta(1 vez) y etd(frecuentemente).
-	también se agregan comentarios
-Vista seguimiento nacional
-	Se registra en comentarios
-
-Definir estado inicial cuando se pasa la orden de preparación y se espera la respuesta de producción, esperando la orden de confirmación
-En preparación
-Trayecto internacional
-Internación
-Trayecto nacional
-Entregado a bodega
-Proceso de costeo
-Completado
+-----
+clientes asociar código de producto y descripción de material
+proveedores cond pago mostrar sug en crear op
+en logística agregar el campo etd, en los buscadores que permita orden de compra, proveedor y numero bl..
 
 
+=============================================
+ PENDIENTES
+=============================================
+Pendientes: reorganizar los elementos al crear una nueva operacion.
+Marca temporal mostrar solo fecha quitar hora
+Agregar un estado de check para simbolizar que la operación fue viste y llevar control de la cantidad de días sin ver, generar alerta
+Agregar calendario de pagos de contabilidad, (2 fechas)...lógica: ver condición pago y margen según próxima fecha de contabilidad
+	contabilidad recibe pagos el lunes en caso de ser ingresado en la semana misma(caso excepcional). marcar pago como pago anticipado realizado y porcentaje. agregar otro que también registre el porcentaje o todo dentro del mismo campo.
 
+Logistica falta ETD(va primero que ETA)
+(pago proveedor indica la fecha en que se le pagará la factura y que fue gestionado el pago). agregar campo de validar la recepción de los fondos o transferencias (que efectivamente se pago, se llama Swift de pago)
+pago derechos maneja la misma lógica anterior
+En logística, falta agregar: Fecha dctos intercomex, maneja la misma lógica, si se ingresa fecha es porque se gestionó, es decir que si falta es porque no se ha enviado.
+Falta días libres, ya que marca los días para devolver el contenedor al deposito que lo presto(la naviera), si se pasa entonces cobran. los días son informados por el
+proveedor y comienza a correr desde la ETA(la eta marca cuando la carga entra a Chile)
+Para la tabla operaciones, falta el campo "Transit Time International", calcula los días entre ETD y ETA. Indica el tiempo que tarda. 
+Falta ETB (fecha de llegada a la bodega desde la ETA), y en ese sentido faltaría un "Transit Time National".
+En Historial, la fecha debe indicar el último cambio en dicho campo (para los insert)
+Generar un reporte de todos los cambios de ETA.
+Cuando una operación entra a etapa de costeo esta terminado, pero se debe avisar al equipo que entró a esa etapa. el sistema debe alertar de la cantidad de días
+que han pasado en que aún no se pasa a Completado (ya se avisó al equipo y por lo tanto esta cerrado el proceso)
+
+=============================================
+ LISTOS
+=============================================
+ver planilla karin marcación de color para ver faltantes
+
+- Para buscar una operación usaba filtro de Excel para ver existencias y en orden alfabético.
+- Crear una operación en blanco o cargando una operación anterior.
+- Definir estado inicial cuando se pasa la orden de preparación y se espera la respuesta de producción, esperando la orden de confirmación
+	En preparación
+	Trayecto internacional
+	Internación
+	Trayecto nacional
+	Entregado a bodega
+	Proceso de costeo
+	Completado

@@ -1,0 +1,95 @@
+.operacion-card {
+  margin-bottom: 24px;
+}
+
+.operacion-row {
+  margin-top: 8px;
+}
+
+.stepper-container {
+  max-width: 700px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+}
+
+.steps-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.step-item {
+  text-align: center;
+  flex: 1;
+  position: relative;
+}
+
+.step-item svg {
+  font-size: 22px;
+  stroke-width: 1.5;
+}
+
+/* Línea de conexión entre pasos */
+.step-connector {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  height: 4px;
+  width: 100%;
+  background-color: #ccc;
+  z-index: 0;
+  margin-left: 30px;
+  margin-right: -30px;
+}
+
+.step-connector.completed {
+  background-color: #3498db;
+}
+
+/* Círculo con ícono */
+.step-circle {
+  margin: 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #ccc;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  z-index: 1;
+  position: relative;
+  box-shadow: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-circle.completed {
+  background-color: #3498db;
+}
+
+.step-circle.active {
+  background-color: #2980b9;
+  box-shadow: 0 0 10px #2980b9;
+}
+
+/* Texto debajo del círculo */
+.step-label {
+  margin-top: 8px;
+  font-weight: 300;
+  color: #999;
+  min-height: 40px;
+}
+
+.step-label.completed-label {
+  color: #333;
+}
+
+.step-label.active-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.operacion-card .ant-card-body {
+  padding: 12px;
+}

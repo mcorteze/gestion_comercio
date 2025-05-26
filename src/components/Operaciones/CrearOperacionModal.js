@@ -189,7 +189,6 @@ const CrearOperacionModal = ({ loading: loadingCrear }) => {
         footer={null}
         width={1200}
         destroyOnClose
-        title={`Detalle Operación #${modalOperacionId}`}
       >
         {modalOperacionId && <LogisticaEditarPage id={modalOperacionId} />}
       </Modal>

@@ -1,0 +1,19 @@
+.stepper-container-simple {
+    display: flex;
+    justify-content: center;
+    border: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    padding: 8px 12px;
+}
+
+.stepper-container-simple .step-connector {
+  position: absolute;
+  top: 20px;
+  right: 0;
+  height: 4px;
+  width: 100%;
+  background-color: #ccc;
+  z-index: 0;
+  margin-left: 40px;
+  margin-right: -40px;
+}
