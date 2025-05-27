@@ -49,7 +49,7 @@ const OperacionesCambios = () => {
     if (!text) return '—';
     const date = new Date(text);
     const pad = (n) => n.toString().padStart(2, '0');
-    return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())} - ${pad(date.getMonth() + 1)}/${pad(date.getDate())}/${date.getFullYear()}`;
+    return `${pad(date.getMonth() + 1)}/${pad(date.getDate())}/${date.getFullYear()}`;
   };
 
   const columns = [

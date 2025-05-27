@@ -960,7 +960,19 @@ app.get('/api/operacion_historial/:id', async (req, res) => {
   }
 
   try {
-    const query = 'SELECT * FROM historial_operacion($1) ORDER BY f_cambio;';
+    const query = `
+      SELECT h.*, 
+             o.numero_orden_compra,
+             o.carpeta_onedrive,
+             o.proveedor_id,
+             o.numero_bl_awb_crt,
+             p.nombre as proveedor_nombre
+      FROM historial_operacion($1) h
+      JOIN operaciones o ON o.id = $1
+      LEFT JOIN proveedores p ON p.id = o.proveedor_id
+      ORDER BY h.f_cambio DESC;
+    `;
+
     const result = await pool.query(query, [idOperacion]);
     res.json(result.rows);
   } catch (error) {
@@ -968,6 +980,7 @@ app.get('/api/operacion_historial/:id', async (req, res) => {
     res.status(500).json({ error: 'Hubo un error al obtener el historial de la operación' });
   }
 });
+
 // ************************************************
 // ************************************************
 // ************************************************

@@ -11,7 +11,7 @@
   
   /* Título de los comentarios */
   .comentarios-title {
-    font-size: 1.5rem;
+    font-size: 12.5rem;
     font-weight: 300;
     margin-bottom: 6px;
     color: #333;
@@ -52,7 +52,7 @@
   
   /* Texto truncado del comentario */
   .comentarios-text {
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: #555;
     line-height: 1.5;
     margin: 0px;

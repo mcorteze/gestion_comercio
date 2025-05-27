@@ -83,10 +83,7 @@ const OperacionesContent = ({
     { title: getAlias('numero_confirmacion_orden'), dataIndex: 'numero_confirmacion_orden', key: 'numero_confirmacion_orden', width: 100, sorter: (a, b) => (a.numero_confirmacion_orden || '').localeCompare(b.numero_confirmacion_orden || '') },
     { title: getAlias('numero_factura_proveedor'), dataIndex: 'numero_factura_proveedor', key: 'numero_factura_proveedor', width: 80, sorter: (a, b) => (a.numero_factura_proveedor || '').localeCompare(b.numero_factura_proveedor || '') },
     { title: getAlias('incoterm'), dataIndex: 'incoterm', key: 'incoterm', width: 60, sorter: (a, b) => (a.incoterm || '').localeCompare(b.incoterm || '') },
-    { title: getAlias('transporte'), dataIndex: 'transporte', key: 'transporte', width: 80, sorter: (a, b) => (a.transporte || '').localeCompare(b.transporte || '') },
-    { title: getAlias('puerto_destino'), dataIndex: 'puerto_destino', key: 'puerto_destino', width: 80, sorter: (a, b) => (a.puerto_destino || '').localeCompare(b.puerto_destino || '') },
-    { title: getAlias('numero_bl_awb_crt'), dataIndex: 'numero_bl_awb_crt', key: 'numero_bl_awb_crt', width: 80, sorter: (a, b) => (a.numero_bl_awb_crt || '').localeCompare(b.numero_bl_awb_crt || '') },
-    { title: getAlias('condicion_pago_dias'), dataIndex: 'condicion_pago_dias', key: 'condicion_pago_dias', width: 40, sorter: (a, b) => a.condicion_pago_dias - b.condicion_pago_dias },
+
     { title: getAlias('f_etd'), dataIndex: 'f_etd', key: 'f_etd', width: 80, render: formatDateTime_Simple, sorter: (a, b) => new Date(a.f_etd) - new Date(b.f_etd) },
     { title: getAlias('etd_confirmada'), dataIndex: 'etd_confirmada', key: 'etd_confirmada', width: 80, render: formatDateTime_Simple, sorter: (a, b) => new Date(a.etd_confirmada) - new Date(b.etd_confirmada) },
     { title: getAlias('f_eta'), dataIndex: 'f_eta', key: 'f_eta', width: 80, render: formatDateTime_Simple, sorter: (a, b) => new Date(a.f_eta) - new Date(b.f_eta) },
